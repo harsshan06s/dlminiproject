@@ -70,7 +70,7 @@ https://www.kaggle.com/datasets/emmarex/plantdisease
    ```bash
    python src/app.py
    ```
-   Send a POST request to `http://localhost:5000/predict` with a form field named `image`.
+   Open `http://localhost:5000/` for a built-in web interface where you can upload an image and see the annotated prediction inline. Programmatic clients can continue to POST to `http://localhost:5000/predict` with a form field named `image`.
 
 ## Configuration
 
@@ -147,7 +147,7 @@ curl -X POST http://localhost:5000/predict \
 
 For JSON clients, send `{ "image_base64": "..." }` instead of multipart form data.
 
-A simple health check is provided at `GET /healthz`.
+A simple health check is provided at `GET /healthz`, and the root page now doubles as a lightweight demo UI for quick manual testing.
 
 ## Reproducibility
 

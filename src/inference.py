@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 from pathlib import Path
 
@@ -65,7 +66,7 @@ def load_image(path: Path) -> Image.Image:
     return Image.open(path).convert("RGB")
 
 
-def save_annotated_image(image: Image.Image, text: str, output_path: Path) -> None:
+def create_annotated_image(image: Image.Image, text: str) -> Image.Image:
     annotated = image.convert("RGB").copy()
     draw = ImageDraw.Draw(annotated)
     try:
@@ -86,7 +87,18 @@ def save_annotated_image(image: Image.Image, text: str, output_path: Path) -> No
     )
     draw.rectangle(rect_coords, fill=(0, 0, 0))
     draw.text((x, y), text, fill=(255, 255, 255), font=font)
+    return annotated
 
+
+def render_annotated_image(image: Image.Image, text: str, image_format: str = "JPEG") -> bytes:
+    annotated = create_annotated_image(image, text)
+    buffer = io.BytesIO()
+    annotated.save(buffer, format=image_format)
+    return buffer.getvalue()
+
+
+def save_annotated_image(image: Image.Image, text: str, output_path: Path) -> None:
+    annotated = create_annotated_image(image, text)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     annotated.save(output_path)
 

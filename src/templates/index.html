@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plant Disease Detection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      --accent: #2a8fbd;
+      --border: rgba(0, 0, 0, 0.12);
+      --bg: rgba(0, 0, 0, 0.03);
+    }
+    body {
+      margin: 0;
+      padding: 0 1.5rem;
+      background: #f7f9fc;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: min(900px, 100%);
+      padding: 2.5rem 2rem 3rem;
+      margin: 3rem 0;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 25px 45px rgba(30, 60, 90, 0.12);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 2.25rem;
+      letter-spacing: -0.02em;
+    }
+    p.lead {
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+      color: #4b5563;
+    }
+    form {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .upload {
+      position: relative;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      background: var(--bg);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .upload:hover {
+      border-color: var(--accent);
+      background: rgba(42, 143, 189, 0.08);
+    }
+    .upload span {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .upload small {
+      color: #6b7280;
+    }
+    .upload input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .file-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      background: rgba(42, 143, 189, 0.12);
+      color: #0f172a;
+      font-weight: 600;
+      max-width: 100%;
+      border: 1px solid rgba(42, 143, 189, 0.4);
+    }
+    .file-pill span {
+      display: inline-block;
+      max-width: clamp(10rem, 60vw, 18rem);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .file-pill button {
+      appearance: none;
+      border: none;
+      background: rgba(15, 23, 42, 0.14);
+      color: inherit;
+      width: 1.9rem;
+      height: 1.9rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .file-pill button:hover {
+      background: rgba(15, 23, 42, 0.24);
+      transform: scale(1.05);
+    }
+    button {
+      justify-self: start;
+      border: none;
+      border-radius: 999px;
+      padding: 0.75rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #2a8fbd, #195b87);
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(42, 143, 189, 0.3);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(42, 143, 189, 0.34);
+    }
+    .alert {
+      padding: 0.85rem 1.1rem;
+      border-radius: 10px;
+      background: rgba(217, 70, 70, 0.12);
+      color: #b91c1c;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .result {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+    }
+    .result h2 {
+      margin: 0 0 1rem;
+      font-size: 1.6rem;
+    }
+    .result .label {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    .result figure {
+      margin: 0;
+      max-width: 100%;
+    }
+    .result img {
+      display: block;
+      width: min(100%, 520px);
+      border-radius: 16px;
+      box-shadow: 0 15px 30px rgba(16, 24, 40, 0.18);
+      margin-bottom: 1.75rem;
+    }
+    .scores {
+      display: grid;
+      gap: 0.6rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .scores li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0.85rem;
+      background: rgba(42, 143, 189, 0.08);
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .scores li span {
+      color: #2563eb;
+    }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+    code {
+      background: rgba(15, 23, 42, 0.08);
+      border-radius: 6px;
+      padding: 0.15rem 0.35rem;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 640px) {
+      body {
+        padding: 0 0.75rem;
+      }
+      .container {
+        padding: 1.75rem 1.25rem 2.25rem;
+        margin: 2rem 0;
+      }
+      .result img {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Plant Disease Detection</h1>
+    <p class="lead">Upload a leaf photo to classify it with the locally hosted EfficientNet model.</p>
+
+    {% if error %}
+      <div class="alert">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="predict-form">
+      <label class="upload" id="upload-label">
+        <span>Choose an image</span>
+        <small>PNG or JPEG · ideally a single leaf</small>
+        <input type="file" name="image" id="image-input" accept="image/*" required>
+      </label>
+      <div class="file-pill" id="file-pill" hidden>
+        <span id="file-name"></span>
+        <button type="button" id="file-remove" aria-label="Remove selected file">&times;</button>
+      </div>
+      <button type="submit">Run Prediction</button>
+    </form>
+
+    {% if result %}
+      <section class="result">
+        <h2>Prediction</h2>
+        <p class="label">{{ result.label }} <span>({{ '%.1f'|format(result.confidence) }}%)</span></p>
+
+        {% if image_data %}
+          <figure>
+            <img src="data:image/jpeg;base64,{{ image_data }}" alt="Annotated prediction">
+          </figure>
+        {% endif %}
+
+        {% if scores %}
+          <h3>Confidence by class</h3>
+          <ul class="scores">
+            {% for score in scores %}
+              <li>
+                <strong>{{ score.label }}</strong>
+                <span>{{ '%.1f'|format(score.confidence) }}%</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </section>
+    {% endif %}
+
+    <footer>
+      <p>Model backbone: {{ backbone }} · Need JSON? Send a POST request to <code>/predict</code>.</p>
+    </footer>
+  </main>
+  <script>
+    (function () {
+      const fileInput = document.getElementById("image-input");
+      const filePill = document.getElementById("file-pill");
+      const fileNameEl = document.getElementById("file-name");
+      const removeBtn = document.getElementById("file-remove");
+
+      if (!fileInput || !filePill || !fileNameEl || !removeBtn) {
+        return;
+      }
+
+      const resetSelection = () => {
+        fileInput.value = "";
+        fileNameEl.textContent = "";
+        filePill.hidden = true;
+      };
+
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (file) {
+          fileNameEl.textContent = file.name;
+          filePill.hidden = false;
+        } else {
+          resetSelection();
+        }
+      });
+
+      removeBtn.addEventListener("click", () => {
+        resetSelection();
+        fileInput.focus({ preventScroll: true });
+      });
+    })();
+  </script>
+</body>
+</html>
