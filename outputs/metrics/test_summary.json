@@ -1,0 +1,19 @@
+{
+  "best_epoch": 9,
+  "best_val_f1": 1.0,
+  "test_metrics": {
+    "accuracy": 0.9956896551724138,
+    "f1": 0.9966592577625109,
+    "precision": 0.996078431372549,
+    "recall": 0.9972972972972972,
+    "loss": 0.05720406782930346
+  },
+  "classes": [
+    "Pepper__bell___Bacterial_spot",
+    "Pepper__bell___healthy",
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+    "Tomato__Target_Spot"
+  ]
+}
