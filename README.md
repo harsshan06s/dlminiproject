@@ -41,6 +41,8 @@ plant-disease-detection/
 
 2. **Download PlantVillage** from Kaggle and unzip so each class has its own folder under `data/raw/PlantVillage` (e.g., `Apple___Apple_scab`).
 
+https://www.kaggle.com/datasets/emmarex/plantdisease
+
 3. **Prepare stratified splits**
    ```bash
    python src/prepare_data.py --config config.yaml --clean
